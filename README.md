@@ -16,4 +16,4 @@ Desarrollada como proyecto integrador en UTNG — 9° Cuatrimestre 2025.
 - [ ] Android TV — S10-S12
 
 ## Autor
-Chavero Martínez Noé — UTNG — tu.correo@utng.edu.mx
+Chavero Martínez Noé — UTNG — noe.ch.mtz97@gmail.com
