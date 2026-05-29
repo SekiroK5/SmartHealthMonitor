@@ -22,20 +22,18 @@ fun SmartHealthNavGraph() {
         navController = navController,
         startDestination = Screen.Login.route
     ) {
-        // ── Login ──────────────────────────────────────
         composable(Screen.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(Screen.Dashboard.route) {
                         popUpTo(Screen.Login.route) {
-                            inclusive = true  // elimina Login del back stack
+                            inclusive = true
                         }
                     }
                 }
             )
         }
 
-        // ── Dashboard ──────────────────────────────────
         composable(Screen.Dashboard.route) {
             DashboardScreen(
                 onHistorialClick = {
@@ -47,7 +45,6 @@ fun SmartHealthNavGraph() {
             )
         }
 
-        // ── Historial ──────────────────────────────────
         composable(Screen.Historial.route) {
             PantallaEnConstruccion(
                 titulo = "Historial completo",
@@ -55,7 +52,6 @@ fun SmartHealthNavGraph() {
             )
         }
 
-        // ── Alerta ─────────────────────────────────────
         composable(Screen.Alerta.route) {
             PantallaEnConstruccion(
                 titulo = "Enviar alerta",
