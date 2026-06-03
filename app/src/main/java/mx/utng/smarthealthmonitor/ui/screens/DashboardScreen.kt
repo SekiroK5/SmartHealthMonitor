@@ -13,10 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import mx.utng.smarthealthmonitor.BuildConfig
 import mx.utng.smarthealthmonitor.data.SmartHealthRepository
 import mx.utng.smarthealthmonitor.data.models.MockData
-import mx.utng.smarthealthmonitor.data.models.LecturaFC
+import mx.utng.smarthealthmonitor.data.db.LecturaFC
 import mx.utng.smarthealthmonitor.ui.components.FilaHistorial
 import mx.utng.smarthealthmonitor.ui.components.TarjetaDato
 import mx.utng.smarthealthmonitor.ui.theme.SmartHealthMonitorTheme
@@ -31,7 +32,8 @@ fun DashboardScreen(
 ) {
     val fc    by viewModel.fc.collectAsState()
     val pasos by viewModel.pasos.collectAsState()
-    val historial = viewModel.historial
+    val historial by viewModel.historial.collectAsState()
+    val scope = rememberCoroutineScope()
 
     SmartHealthMonitorTheme {
         Scaffold(
@@ -104,7 +106,9 @@ fun DashboardScreen(
                     if (BuildConfig.DEBUG) {
                         OutlinedButton(
                             onClick = {
-                                SmartHealthRepository.actualizarFC((60..110).random())
+                                scope.launch {
+                                    SmartHealthRepository.actualizarFC((60..110).random())
+                                }
                                 SmartHealthRepository.actualizarPasos((3000..8000).random())
                             },
                             modifier = Modifier.fillMaxWidth()
