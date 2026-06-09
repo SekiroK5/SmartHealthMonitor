@@ -15,9 +15,10 @@ import mx.utng.smarthealthmonitor.ui.theme.SmartHealthMonitorTheme
 fun AlertaScreen(
     fc: Int,
     onDismiss: () -> Unit,
-    onConfirmar: () -> Unit
+    onConfirmar: (nota: String) -> Unit   // ← ahora recibe la nota
 ) {
     var enviando by remember { mutableStateOf(false) }
+    var nota     by remember { mutableStateOf("") }  // ← estado de la nota
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -46,13 +47,23 @@ fun AlertaScreen(
                     text = "Se notificará a tus contactos de emergencia.\n" +
                             "Esta acción no se puede deshacer."
                 )
+                // ── Nota opcional ──────────────────────────
+                OutlinedTextField(
+                    value       = nota,
+                    onValueChange = { nota = it },
+                    label       = { Text("Nota opcional") },
+                    placeholder = { Text("Me siento mareado...") },
+                    singleLine  = false,
+                    maxLines    = 3,
+                    modifier    = Modifier.fillMaxWidth()
+                )
             }
         },
         confirmButton = {
             Button(
                 onClick = {
                     enviando = true
-                    onConfirmar()
+                    onConfirmar(nota)   // ← pasa la nota al confirmar
                 },
                 enabled = !enviando,
                 colors  = ButtonDefaults.buttonColors(
@@ -91,6 +102,6 @@ fun AlertaScreen(
 @Composable
 private fun AlertaScreenPreview() {
     SmartHealthMonitorTheme {
-        AlertaScreen(fc = 145, onDismiss = { }, onConfirmar = { })
+        AlertaScreen(fc = 145, onDismiss = { }, onConfirmar = { _ -> })
     }
 }
