@@ -19,10 +19,13 @@ private val LightColorScheme = lightColorScheme(
     onPrimary        = SHOnPrimary,
     primaryContainer = SHPrimaryContainer,
     secondary        = SHSecondary,
-    error            = SHError,
     background       = SHBackground,
     surface          = SHSurface,
     onSurface        = SHOnSurface,
+    error            = SHError,              // ← rojo oscuro para texto
+    onError          = SHOnError,
+    errorContainer   = SHErrorContainer,     // ← rosa claro para fondos
+    onErrorContainer = SHOnErrorContainer,
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -30,9 +33,12 @@ private val DarkColorScheme = darkColorScheme(
     onPrimary        = SHOnPrimaryDark,
     primaryContainer = SHPrimaryContainerDark,
     secondary        = SHSecondaryDark,
-    error            = SHErrorDark,
     background       = SHBackgroundDark,
     surface          = SHSurfaceDark,
+    error            = SHErrorDark,
+    onError          = SHOnErrorDark,
+    errorContainer   = SHErrorContainerDark,
+    onErrorContainer = SHOnErrorContainerDark,
 )
 
 @Composable

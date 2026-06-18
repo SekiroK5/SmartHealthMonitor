@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -45,11 +45,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.activity:activity-compose:1.9.3")
 
-    implementation(platform("androidx.compose:compose-bom:2024.11.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    // Compose for Wear OS
     implementation("androidx.wear.compose:compose-material:1.3.1")
     implementation("androidx.wear.compose:compose-foundation:1.3.1")
+    implementation("androidx.wear.compose:compose-navigation:1.3.1")
+
+    // Horologist
+    implementation("com.google.android.horologist:horologist-compose-layout:0.6.17")
+    implementation("com.google.android.horologist:horologist-compose-material:0.6.17")
 
     // Wearable Data Layer
     implementation("com.google.android.gms:play-services-wearable:18.2.0")
@@ -59,6 +62,9 @@ dependencies {
     implementation("androidx.health:health-services-client:1.1.0-alpha03")
     implementation("com.google.guava:guava:33.0.0-android")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.7.3")
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
