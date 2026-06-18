@@ -1,4 +1,4 @@
-# SmartHealth Monitor
+# SmartHealth Monitor  I
 
 ![Android](https://img.shields.io/badge/Android-API26+-green)
 ![Compose](https://img.shields.io/badge/Jetpack%20Compose-MD3-blue)
@@ -32,6 +32,26 @@ Desarrollada como proyecto integrador — UTNG 9° Cuatrimestre 2025.
 ![Dashboard](screenshots/dashboard.png)
 ![Historial](screenshots/historial.png)
 ![Alerta](screenshots/alerta.png)
+
+
+## Unidad II — Wear OS
+
+| Pantalla | Descripción |
+|---|---|
+| WearDashboardScreen | FC en tiempo real con ScalingLazyColumn y TimeText |
+| WearHistorialScreen | Lista con Rotary Input (corona del reloj) |
+| WearAlertaScreen | Botones circulares de confirmación |
+| SmartHealth WatchFace | Hora + FC en el WatchFace nativo |
+
+### Nota técnica — WatchFace API 36
+El WatchFaceService basado en CanvasRenderer2 (v1.2.1) no es 
+compatible con Wear OS 6.0 (API 36). La implementación está 
+registrada en AndroidManifest.xml y compila correctamente. 
+Se requiere API 33 para visualizarlo.
+
+![WatchFace](screenshots/watchface.png)
+![WearDashboard](screenshots/wear_dashboard.png)
+![WearHistorial](screenshots/wear_historial.png)
 
 ## Autor
 
