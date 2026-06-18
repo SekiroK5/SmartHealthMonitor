@@ -11,6 +11,7 @@ import mx.utng.smarthealthmonitor.wear.presentation.components.WearFCCard
 @Composable
 fun WearDashboardScreen(
     onAlertClick: () -> Unit = {},
+    onHistorialClick: () -> Unit = {},
     viewModel: WearDashboardViewModel = viewModel()
 ) {
     val fc by viewModel.fc.collectAsState()
@@ -28,7 +29,6 @@ fun WearDashboardScreen(
             state    = listState,
             modifier = Modifier.fillMaxSize()
         ) {
-            // Item 1: Card de FC
             item {
                 WearFCCard(
                     fc       = fc,
@@ -36,13 +36,11 @@ fun WearDashboardScreen(
                 )
             }
 
-            // Item 2: Botones subir/bajar FC
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    // Bajar FC
                     CompactChip(
                         label  = { Text("▼ FC") },
                         onClick = { viewModel.bajarFC() },
@@ -50,7 +48,6 @@ fun WearDashboardScreen(
                             backgroundColor = MaterialTheme.colors.surface
                         )
                     )
-                    // Subir FC
                     CompactChip(
                         label  = { Text("▲ FC") },
                         onClick = { viewModel.subirFC() },
@@ -61,15 +58,22 @@ fun WearDashboardScreen(
                 }
             }
 
-            // Item 3: Chip de Alerta
             item {
                 Chip(
-                    label   = { Text("⚠ Alerta") },
-                    onClick  = onAlertClick,
-                    colors   = ChipDefaults.primaryChipColors(
+                    label    = { Text("📋 Historial") },
+                    onClick   = onHistorialClick,
+                    modifier  = Modifier.fillMaxWidth()
+                )
+            }
+
+            item {
+                Chip(
+                    label    = { Text("⚠ Alerta") },
+                    onClick   = onAlertClick,
+                    colors    = ChipDefaults.primaryChipColors(
                         backgroundColor = MaterialTheme.colors.error
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier  = Modifier.fillMaxWidth()
                 )
             }
         }
