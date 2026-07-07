@@ -1,6 +1,7 @@
 package mx.utng.smarthealthmonitor.wear.presentation
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.*
 
 data class LecturaFCWear(
@@ -10,13 +11,24 @@ data class LecturaFCWear(
     val esNormal: Boolean = valorBpm in 60..100
 )
 
-class WearDashboardViewModel : ViewModel() {
+class WearDashboardViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _fc = MutableStateFlow(72)
+    private val prefs = application.getSharedPreferences("smarthealthmonitor", 0)
+
+    private val _fc = MutableStateFlow(prefs.getInt("fc_actual", 72))
     val fc: StateFlow<Int> = _fc.asStateFlow()
 
-    fun subirFC() { _fc.value = (_fc.value + 5).coerceAtMost(150) }
-    fun bajarFC()  { _fc.value = (_fc.value - 5).coerceAtLeast(40) }
+    fun subirFC() {
+        val nuevo = (_fc.value + 5).coerceAtMost(150)
+        _fc.value = nuevo
+        prefs.edit().putInt("fc_actual", nuevo).apply()
+    }
+
+    fun bajarFC() {
+        val nuevo = (_fc.value - 5).coerceAtLeast(40)
+        _fc.value = nuevo
+        prefs.edit().putInt("fc_actual", nuevo).apply()
+    }
 
     private val _historial = MutableStateFlow(
         listOf(
