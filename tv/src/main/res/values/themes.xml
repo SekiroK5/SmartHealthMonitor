@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.SmartHealthTV"
-           parent="Theme.Leanback">
+    <style name="Theme.SmartHealthTV" parent="Theme.Leanback">
         <item name="colorPrimary">@color/sh_primary</item>
         <item name="colorAccent">@color/sh_amber</item>
-        <item name="android:colorBackground">@color/sh_dark</item>
+        <!-- Un fondo elegante con degradado para wow effect -->
+        <item name="android:windowBackground">@drawable/tv_gradient_bg</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
     </style>
 </resources>
