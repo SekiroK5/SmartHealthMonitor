@@ -26,13 +26,13 @@ class MainFragment : BrowseSupportFragment() {
     private fun cargarFilas() {
         val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
  
-        // ── Fila 1: Estado actual (FC + Pasos) ───────────
+        // ── Fila 1: Estado actual (FC actual) ────────────
         val estadoAdapter = ArrayObjectAdapter(FCCardPresenter())
-        // Datos simulados — en Ej.03 vendrán de Room
-        estadoAdapter.add(LecturaFC(id=0, valorBpm=88, hora="Ahora"))
-        estadoAdapter.add(LecturaFC(id=1, valorBpm=4250, hora="Pasos"))
+        estadoAdapter.add(LecturaFC(id=0, valorBpm=78,  hora="FC Actual"))
+        estadoAdapter.add(LecturaFC(id=1, valorBpm=65,  hora="FC Mínima"))
+        estadoAdapter.add(LecturaFC(id=8, valorBpm=115, hora="FC Máxima"))
         rowsAdapter.add(ListRow(HeaderItem("Estado actual"), estadoAdapter))
- 
+
         // ── Fila 2: Historial de FC ────────────────────
         val histAdapter = ArrayObjectAdapter(FCCardPresenter())
         MockData.historialFC.forEach { histAdapter.add(it) }
