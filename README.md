@@ -1,58 +1,97 @@
-# SmartHealth Monitor  I
+# SmartHealth Monitor 🫀
 
-![Android](https://img.shields.io/badge/Android-API26+-green)
-![Compose](https://img.shields.io/badge/Jetpack%20Compose-MD3-blue)
+**UTNG · DGSW · Desarrollo de Aplicaciones Multiplataforma (Wear OS + Android TV)**
+Alumno: Chavero Martínez Noé · Grupo: GIDS6092
 
-Aplicación Android de monitoreo de salud personal en tiempo real.
-Desarrollada como proyecto integrador — UTNG 9° Cuatrimestre 2025.
+---
+
+## Descripción
+
+SmartHealth Monitor es una aplicación multiplataforma de monitoreo de salud en tiempo real. Integra un **smartwatch Wear OS** como sensor de frecuencia cardíaca, un **smartphone Android** como centro de datos y notificaciones, una **pantalla de TV Android TV** como panel de visualización y **Chromecast** para transmisión remota de media.
+
+---
+
+## Módulos del proyecto
+
+| Módulo | Plataforma | Descripción |
+|--------|-----------|-------------|
+| `app`  | 📱 Smartphone | Dashboard + Historial + Cast SDK |
+| `wear` | ⌚ Wear OS | Sensor FC + WatchFace |
+| `tv`   | 📺 Android TV | Catálogo + Detalle + ExoPlayer |
+
+---
+
+## Arquitectura — SmartHealth Monitor
+
+```
+Sensor PPG (Wear OS)
+    │  Health Services API
+    ▼
+PassiveListenerService (wear)
+    │  MessageClient (BLE)
+    ▼
+WearListenerService (app)
+    │  SmartHealthRepository
+    ▼
+StateFlow<Int> (fcActual)  ──────────────────────────────────┐
+    │                                                        │
+    ▼                                                        ▼
+DashboardViewModel (app)              TvViewModel (tv)
+    │  collectAsState()                    │  collectAsState()
+    ▼                                      ▼
+DashboardScreen (Compose)          TvCatalogScreen (Compose TV)
+    └── CastButton ──► Chromecast (Remote Playback)
+
+Room DB (LecturaFC)  ◄──  Repository  ──►  Flow<List<LecturaFC>>
+                                                │
+                          ┌─────────────────────┴──────────┐
+                          ▼                                ▼
+               HistorialScreen (app)        TvCatalogScreen (tv)
+```
+
+---
 
 ## Stack tecnológico
 
 | Tecnología | Uso |
-|---|---|
-| Kotlin + Jetpack Compose | UI declarativa con Material Design 3 |
-| Wearable Data Layer API | Comunicación reloj ↔ teléfono (BLE) |
-| Health Services API | Sensor FC real en background (Wear OS) |
-| Room Database | Historial persistente de lecturas FC |
-| Jetpack Navigation | NavHost entre 4 pantallas |
-| GitHub + Conventional Commits | Control de versiones profesional |
+|-----------|-----|
+| **Jetpack Compose** | UI en app y Wear OS |
+| **Compose for TV** + Leanback | UI en Android TV |
+| **Health Services API** | Sensor FC real en Wear OS |
+| **Wearable Data Layer** (MessageClient) | Comunicación BLE wearable → teléfono |
+| **Room DB** | Persistencia del historial de FC |
+| **StateFlow / Flow** | Datos reactivos en toda la arquitectura |
+| **Media3 / ExoPlayer** | Reproducción de video en Android TV |
+| **Cast SDK** | Transmisión a Chromecast desde el teléfono |
+| **Navigation Compose** | Navegación en app y TV |
 
-## Pantallas
+---
 
-| Pantalla | Descripción |
-|---|---|
-| LoginScreen | Autenticación con validación y State |
-| DashboardScreen | FC y Pasos en tiempo real del wearable |
-| HistorialScreen | Lecturas persistidas en Room con Flow reactivo |
-| AlertaScreen | AlertDialog MD3 + Snackbar de confirmación |
+## Tags de versiones
+
+| Tag | Sesión | Descripción |
+|-----|--------|-------------|
+| `v1.0.0` | S1 | Proyecto base |
+| `v1.1.0` | S7 | Health Services API + Room DB |
+| `v2.0.0` | S11 | Android TV Leanback |
+| `v2.1.0` | S12 | TV DetailScreen + ExoPlayer |
+| `v2.2.0` | S13 | Cast SDK + README |
+
+---
 
 ## Capturas de pantalla
 
-![Login](screenshots/login.png)
-![Dashboard](screenshots/dashboard.png)
-![Historial](screenshots/historial.png)
-![Alerta](screenshots/alerta.png)
+| App (Smartphone) | Wear OS | Android TV |
+|---|---|---|
+| Dashboard + CastButton | FC en tiempo real | Catálogo de lecturas |
 
+---
 
-## Unidad II — Wear OS
+## Cómo correr el proyecto
 
-| Pantalla | Descripción |
-|---|---|
-| WearDashboardScreen | FC en tiempo real con ScalingLazyColumn y TimeText |
-| WearHistorialScreen | Lista con Rotary Input (corona del reloj) |
-| WearAlertaScreen | Botones circulares de confirmación |
-| SmartHealth WatchFace | Hora + FC en el WatchFace nativo |
+1. Clonar el repositorio
+2. Abrir en Android Studio Hedgehog o superior
+3. Seleccionar el módulo (`app`, `wear`, o `tv`) en el dropdown
+4. Correr en el emulador correspondiente
 
-### Nota técnica — WatchFace API 36
-El WatchFaceService basado en CanvasRenderer2 (v1.2.1) no es 
-compatible con Wear OS 6.0 (API 36). La implementación está 
-registrada en AndroidManifest.xml y compila correctamente. 
-Se requiere API 33 para visualizarlo.
-
-![WatchFace](screenshots/watchface.png)
-![WearDashboard](screenshots/wear_dashboard.png)
-![WearHistorial](screenshots/wear_historial.png)
-
-## Autor
-
-Chavero Martínez Noé — UTNG — Ing. en Desarrollo y Gestión de Software
+> **Nota:** Para probar la comunicación Wear → App, emparejar ambos emuladores en Device Manager.
