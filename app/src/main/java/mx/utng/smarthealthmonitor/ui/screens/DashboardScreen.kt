@@ -12,7 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.mediarouter.app.MediaRouteButton
+import com.google.android.gms.cast.framework.CastButtonFactory
 import kotlinx.coroutines.launch
 import mx.utng.smarthealthmonitor.data.SmartHealthRepository
 import mx.utng.smarthealthmonitor.ui.components.FilaHistorial
@@ -61,7 +64,19 @@ fun DashboardScreen(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor    = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    ),
+                    actions = {
+                        // CastButton: AndroidView que envuelve MediaRouteButton
+                        // El ícono Cast es: gris (sin Chromecasts) / blanco (disponibles) / animado (conectando)
+                        AndroidView(
+                            factory = { context ->
+                                MediaRouteButton(context).apply {
+                                    CastButtonFactory.setUpMediaRouteButton(context, this)
+                                }
+                            },
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
                 )
             },
             floatingActionButton = {
