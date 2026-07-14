@@ -7,6 +7,8 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
+    <!-- Permiso de internet para reproducir el video de demo -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,15 +18,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartHealthTV">
 
+        <!-- TVActivity — Compose for TV con Navigation (S12) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".TVActivity"
             android:exported="true"
-            android:label="SmartHealth TV">
+            android:label="SmartHealth TV"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- MainActivity — Leanback (S11, mantenida para referencia) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="SmartHealth TV Leanback" />
 
     </application>
 
