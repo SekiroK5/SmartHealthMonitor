@@ -2,7 +2,10 @@ package mx.utng.smarthealthmonitor.wear.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.*
+import mx.utng.smarthealthmonitor.wear.mqtt.MqttWearPublisher
 
 data class LecturaFCWear(
     val id: Int,
@@ -14,9 +17,20 @@ data class LecturaFCWear(
 class WearDashboardViewModel(application: Application) : AndroidViewModel(application) {
 
     private val prefs = application.getSharedPreferences("smarthealthmonitor", 0)
-
+    private val mqttPublisher = MqttWearPublisher(application)
+    
     private val _fc = MutableStateFlow(prefs.getInt("fc_actual", 72))
     val fc: StateFlow<Int> = _fc.asStateFlow()
+
+    init {
+        mqttPublisher.connect()
+        viewModelScope.launch {
+            _fc.collect { bpm ->
+                val estado = when { bpm < 60 -> "FC Baja"; bpm > 100 -> "FC Alta"; else -> "Normal" }
+                mqttPublisher.publishFC(bpm, estado)
+            }
+        }
+    }
 
     fun subirFC() {
         val nuevo = (_fc.value + 5).coerceAtMost(150)
@@ -45,4 +59,9 @@ class WearDashboardViewModel(application: Application) : AndroidViewModel(applic
         )
     )
     val historial: StateFlow<List<LecturaFCWear>> = _historial.asStateFlow()
+
+    override fun onCleared() {
+        super.onCleared()
+        mqttPublisher.disconnect()
+    }
 }
