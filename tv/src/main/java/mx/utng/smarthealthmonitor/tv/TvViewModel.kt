@@ -7,10 +7,17 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import mx.utng.smarthealthmonitor.data.db.LecturaFC
 
+import mx.utng.smarthealthmonitor.mqtt.TvMessage
+import mx.utng.smarthealthmonitor.tv.mqtt.MqttTvSubscriber
+import kotlinx.coroutines.launch
+
 /** UI state expuesto a las pantallas Compose */
 data class TvUiState(
     val lecturas: List<LecturaFC> = emptyList(),
-    val fcActual: Int = 0
+    val fcActual: Int = 0,
+    val fcEstado: String = "Normal",
+    val ultimaHora: String = "",
+    val isLoading: Boolean = false
 )
 
 /**
@@ -20,7 +27,7 @@ data class TvUiState(
  *  - state: StateFlow<TvUiState>  → usado con collectAsStateWithLifecycle()
  *  - fc   : StateFlow<Int>        → FC actual (retrocompatibilidad con Leanback)
  */
-class TvViewModel : ViewModel() {
+class TvViewModel(private val context: Context) : ViewModel() {
 
     private val _fcActual  = MutableStateFlow(78)
     val fc: StateFlow<Int> = _fcActual.asStateFlow()
@@ -28,17 +35,19 @@ class TvViewModel : ViewModel() {
     private val _lecturas  = MutableStateFlow<List<LecturaFC>>(emptyList())
 
     /** State principal consumido por TvDetailScreen */
-    val state: StateFlow<TvUiState> = combine(_fcActual, _lecturas) { fc, lecturas ->
-        TvUiState(lecturas = lecturas, fcActual = fc)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TvUiState())
+    private val _state = MutableStateFlow(TvUiState())
+    val state: StateFlow<TvUiState> = _state.asStateFlow()
+    
+    private val mqttFlow = MutableStateFlow<TvMessage?>(null)
+    private val mqttSubscriber = MqttTvSubscriber(context, mqttFlow)
 
     /** Retrocompatibilidad Leanback */
     val historial: StateFlow<List<LecturaFC>> = _lecturas.asStateFlow()
 
     init {
-        // Datos de demostración — en producción vendrían de Room via Repository
+        // Datos de demostración
         _fcActual.value = 78
-        _lecturas.value = listOf(
+        val demoLecturas = listOf(
             LecturaFC(id = 2,  valorBpm = 72,  hora = "08:00"),
             LecturaFC(id = 3,  valorBpm = 68,  hora = "09:30"),
             LecturaFC(id = 4,  valorBpm = 91,  hora = "11:00"),
@@ -48,6 +57,32 @@ class TvViewModel : ViewModel() {
             LecturaFC(id = 8,  valorBpm = 65,  hora = "17:30"),
             LecturaFC(id = 9,  valorBpm = 88,  hora = "19:00")
         )
+        _lecturas.value = demoLecturas
+        _state.value = TvUiState(lecturas = demoLecturas, fcActual = 78)
+
+        mqttSubscriber.connect()
+
+        viewModelScope.launch {
+            mqttFlow.collect { tvMsg ->
+                tvMsg ?: return@collect
+                
+                // Actualizamos state principal (Compose)
+                _state.update { it.copy(
+                    fcActual = tvMsg.bpm,
+                    fcEstado = tvMsg.estado,
+                    ultimaHora = tvMsg.hora,
+                    isLoading = false
+                )}
+                
+                // Actualizamos Flow Leanback
+                _fcActual.value = tvMsg.bpm
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        mqttSubscriber.disconnect()
     }
 }
 
@@ -55,5 +90,5 @@ class TvViewModel : ViewModel() {
 class TvViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        TvViewModel() as T
+        TvViewModel(context) as T
 }
