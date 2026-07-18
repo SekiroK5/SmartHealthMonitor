@@ -29,6 +29,9 @@ android {
         buildConfigField("String", "MQTT_BROKER_URL", localProperties.getProperty("MQTT_BROKER_URL") ?: "\"\"")
         buildConfigField("String", "MQTT_USERNAME", localProperties.getProperty("MQTT_USERNAME") ?: "\"\"")
         buildConfigField("String", "MQTT_PASSWORD", localProperties.getProperty("MQTT_PASSWORD") ?: "\"\"")
+        
+        buildConfigField("String", "NEON_API_KEY", "\"${localProperties.getProperty("NEON_API_KEY", "")}\"")
+        buildConfigField("String", "NEON_HOST", "\"${localProperties.getProperty("NEON_HOST", "")}\"")
     }
 
     buildTypes {
@@ -92,6 +95,15 @@ dependencies {
     implementation("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
     // Kotlinx Serialization para JSON
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    // Retrofit + OkHttp para llamadas a Neon HTTP API
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    
+    // WorkManager para sync periódico en background
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

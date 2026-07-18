@@ -22,12 +22,20 @@ class WearDashboardViewModel(application: Application) : AndroidViewModel(applic
     private val _fc = MutableStateFlow(prefs.getInt("fc_actual", 72))
     val fc: StateFlow<Int> = _fc.asStateFlow()
 
+    private val neonRepo = mx.utng.smarthealthmonitor.wear.data.WearNeonRepository()
+
     init {
         mqttPublisher.connect()
         viewModelScope.launch {
             _fc.collect { bpm ->
                 val estado = when { bpm < 60 -> "FC Baja"; bpm > 100 -> "FC Alta"; else -> "Normal" }
                 mqttPublisher.publishFC(bpm, estado)
+                
+                // Publicar a Neon en IO thread
+                launch(kotlinx.coroutines.Dispatchers.IO) {
+                    runCatching { neonRepo.publicarLectura(bpm, estado) }
+                        .onFailure { android.util.Log.w("WEAR","Sin red: ${it.message}") }
+                }
             }
         }
     }

@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-05-26T02:54:16.097363100Z">
+        <DropdownSelection timestamp="2026-07-16T21:59:54.441511800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Noe Chavero\.android\avd\Pixel_6a_API_36.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Noe Chavero\.android\avd\Pixel_9_Pro_XL_API_36.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="wear">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-06-02T23:23:53.247940100Z">
+        <DropdownSelection timestamp="2026-07-16T21:58:59.594862Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Noe Chavero\.android\avd\Wear_OS_Large_Round_API_36.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Noe Chavero\.android\avd\Pixel_9_Pro_API_36.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -26,10 +26,10 @@
       </SelectionState>
       <SelectionState runConfigName="tv">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-07-07T23:07:36.687575200Z">
+        <DropdownSelection timestamp="2026-07-16T21:49:32.817087700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Noe Chavero\.android\avd\Television_720p_API_36.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Noe Chavero\.android\avd\Pixel_9_Pro_API_36.avd" />
             </handle>
           </Target>
         </DropdownSelection>

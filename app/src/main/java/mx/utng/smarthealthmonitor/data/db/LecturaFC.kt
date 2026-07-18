@@ -11,5 +11,8 @@ data class LecturaFC(
     val hora: String = java.text.SimpleDateFormat(
         "HH:mm", java.util.Locale.getDefault())
         .format(java.util.Date()),
-    val esNormal: Boolean = valorBpm in 60..100
+    val esNormal: Boolean = valorBpm in 60..100,
+    val dispositivo: String = "app",
+    @ColumnInfo(name = "sincronizado")
+    val sincronizado: Boolean = false
 )

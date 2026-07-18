@@ -14,11 +14,24 @@ import kotlinx.coroutines.launch
 /** UI state expuesto a las pantallas Compose */
 data class TvUiState(
     val lecturas: List<LecturaFC> = emptyList(),
+    val estadisticas: List<LecturaFC> = emptyList(),
     val fcActual: Int = 0,
     val fcEstado: String = "Normal",
     val ultimaHora: String = "",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val error: String? = null
 )
+
+fun mx.utng.smarthealthmonitor.tv.data.remote.LecturaFcDto.toLecturaFC(): LecturaFC {
+    return LecturaFC(
+        id = this.id,
+        valorBpm = this.bpm,
+        esNormal = this.estado == "Normal",
+        dispositivo = this.dispositivo,
+        hora = this.hora,
+        sincronizado = true
+    )
+}
 
 /**
  * TvViewModel — datos reactivos para las pantallas Compose for TV.
@@ -38,6 +51,8 @@ class TvViewModel(private val context: Context) : ViewModel() {
     private val _state = MutableStateFlow(TvUiState())
     val state: StateFlow<TvUiState> = _state.asStateFlow()
     
+    private val neonRepo = mx.utng.smarthealthmonitor.tv.data.TvNeonRepository()
+    
     private val mqttFlow = MutableStateFlow<TvMessage?>(null)
     private val mqttSubscriber = MqttTvSubscriber(context, mqttFlow)
 
@@ -45,20 +60,7 @@ class TvViewModel(private val context: Context) : ViewModel() {
     val historial: StateFlow<List<LecturaFC>> = _lecturas.asStateFlow()
 
     init {
-        // Datos de demostración
-        _fcActual.value = 78
-        val demoLecturas = listOf(
-            LecturaFC(id = 2,  valorBpm = 72,  hora = "08:00"),
-            LecturaFC(id = 3,  valorBpm = 68,  hora = "09:30"),
-            LecturaFC(id = 4,  valorBpm = 91,  hora = "11:00"),
-            LecturaFC(id = 5,  valorBpm = 110, hora = "12:30"),
-            LecturaFC(id = 6,  valorBpm = 75,  hora = "14:00"),
-            LecturaFC(id = 7,  valorBpm = 130, hora = "16:00"),
-            LecturaFC(id = 8,  valorBpm = 65,  hora = "17:30"),
-            LecturaFC(id = 9,  valorBpm = 88,  hora = "19:00")
-        )
-        _lecturas.value = demoLecturas
-        _state.value = TvUiState(lecturas = demoLecturas, fcActual = 78)
+        cargarDatos()
 
         mqttSubscriber.connect()
 
@@ -79,6 +81,27 @@ class TvViewModel(private val context: Context) : ViewModel() {
             }
         }
     }
+
+    fun cargarDatos() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            try {
+                val lecturas = neonRepo.obtenerHistorialCompleto(50)
+                val stats    = neonRepo.obtenerEstadisticas()
+                val historialRoom = lecturas.map { it.toLecturaFC() }
+                _lecturas.value = historialRoom
+                _state.update { it.copy(
+                    lecturas  = historialRoom,
+                    estadisticas = stats.map { it.toLecturaFC() },
+                    isLoading = false
+                )}
+            } catch (e: Exception) {
+                _state.update { it.copy(error = e.message, isLoading = false) }
+            }
+        }
+    }
+    
+    fun refresh() = cargarDatos()
 
     override fun onCleared() {
         super.onCleared()
